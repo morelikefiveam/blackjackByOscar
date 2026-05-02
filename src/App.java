@@ -35,7 +35,6 @@ public class App {
             game.placeBet();
             game.deal();
             game.play();
-            System.out.println("DEBUG: " + player.chips);
             if (player.chips > 0) {
                 FileWriter writer = new FileWriter("player.txt");
                 writer.write(player.name + "," + player.chips);
