@@ -4,11 +4,13 @@ public class Game {
     Player player;
     Player dealer;
     Deck deck;
+    Scanner scanner;
 
-    public Game(Player player, Player dealer, Deck deck) {
+    public Game(Player player, Player dealer, Deck deck, Scanner scanner) {
         this.player = player;
         this.dealer = dealer;
         this.deck = deck;
+        this.scanner = scanner;
     }
 
     public void deal() {
@@ -21,7 +23,7 @@ public class Game {
     }
 
     public void play() {
-        Scanner scanner = new Scanner(System.in);
+        
         boolean standing = false;
         while (!standing && !player.hand.isBust()) {
             System.out.println("Your total:" + player.hand.getTotal());
@@ -41,18 +43,16 @@ public class Game {
         determineWinner();
     }
 
-    public void placeBet() {
-        Scanner betScanner = new Scanner(System.in);
+    public void placeBet(){
         System.out.println("Current chip balance: " + player.chips);
         System.out.println("How many chips do you want to bet?");
         while (true) {
-            int bet = betScanner.nextInt();
+            int bet = Integer.parseInt(scanner.nextLine());
             
             if (bet > player.chips || bet <= 0) {
                 System.out.println("Invalid bet! Try again");
             } else {
                 player.bet = bet;
-                player.chips -= player.bet;
                 break;
             }
         }
@@ -62,6 +62,7 @@ public class Game {
         if (player.hand.isBust()) {
             System.out.println("Dealer wins!");
             System.out.println("You lost " + player.bet + " chips!");
+            player.chips -= player.bet;
             System.out.println("Current chip balance: " + player.chips);
         } else if (dealer.hand.isBust()) {
             System.out.println("You win!");
@@ -71,6 +72,7 @@ public class Game {
         } else if (player.hand.getTotal() < dealer.hand.getTotal()) {
             System.out.println("Dealer wins!");
             System.out.println("You lost " + player.bet + " chips!");
+            player.chips -= player.bet;
             System.out.println("Current chip balance: " + player.chips);
         } else if (dealer.hand.getTotal() < player.hand.getTotal()) {
             System.out.println("You win!");
@@ -80,7 +82,6 @@ public class Game {
         } else if (player.hand.getTotal() == dealer.hand.getTotal()) {
             System.out.println("Draw!");
             System.out.println("Returning your chips...");
-            player.chips += player.bet; 
             System.out.println("Current chip balance: " + player.chips);
         }
     }
