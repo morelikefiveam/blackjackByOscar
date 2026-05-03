@@ -2,11 +2,15 @@ public class Player {
     String name;
     Hand hand;
     int chips;
+    int id;
     int bet = 0;
-    
-    public Player(String name, Hand hand, int chips){
+    Player next;
+
+    public Player(String name, Hand hand, int chips, int id){
+        this.id = id;
         this.name = name;
         this.hand = hand;
-        this.chips = chips;
+        this.chips = chips; 
+        
     }
 }

@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
@@ -8,33 +9,71 @@ public class App {
         File saveFile = new File("player.txt");
         String name = "";
         int chips = 500;
+        int newId = 1;
 
         System.out.println("--- THE TOWER ---");
         System.out.println("1. New Game");
         System.out.println("2. Load Game");
         int decision = Integer.parseInt(scanner.nextLine().trim());
-        if (decision == 1){
+        if (decision == 1) {
             System.out.println("What is your name?");
             name = scanner.nextLine();
-        } else if (decision == 2){
-            if (saveFile.exists() && saveFile.length() > 0){
-            Scanner fileScanner = new Scanner(saveFile);
-            String line = fileScanner.nextLine();
-            String[] parts = line.split(",");
-            name = parts[0];
-            chips = Integer.parseInt(parts[1]);
-            fileScanner.close();
+            if (saveFile.exists()) {
+                Scanner counter = new Scanner(saveFile);
+                while (counter.hasNextLine()) {
+                    counter.nextLine();
+                    newId++;
+                }
+                counter.close();
+            }
+        } else if (decision == 2) {
+
+            Player head = null;
+            Player current = null;
+            int count = 1;
+
+            if (saveFile.exists() && saveFile.length() > 0) {
+                Scanner fileScanner = new Scanner(saveFile);
+                System.out.println("Choose a player:");
+                while (fileScanner.hasNextLine()) {
+                    String line = fileScanner.nextLine();
+                    String[] parts = line.split(",");
+                    int savedId = Integer.parseInt(parts[0].trim());
+                    String savedName = parts[1];
+                    int savedChips = Integer.parseInt(parts[2].trim());
+                    Player newPlayer = new Player(savedName, new Hand(), savedChips, savedId);
+                    if (head == null) {
+                        head = newPlayer;
+                        current = head;
+                    } else {
+                        current.next = newPlayer;
+                        current = current.next;
+                    }
+                    System.out.println(count + ". " + savedName + " (" + savedChips + " chips)");
+                    count++;
+                }
+
+                fileScanner.close();
+
+                int choice = Integer.parseInt(scanner.nextLine().trim());
+
+                Player chosen = head;
+                for (int i = 1; i < choice; i++) {
+                    chosen = chosen.next;
+                }
+                name = chosen.name;
+                chips = chosen.chips;
+                newId = chosen.id;
             } else {
-                System.out.println("No save file detected! Starting new game");
+                System.out.println("No saves detected! Starting new game");
                 System.out.println("What is your name?");
                 name = scanner.nextLine();
             }
         }
 
-        
         Deck deck = new Deck();
-        Player player = new Player(name, new Hand(), chips);
-        Player dealer = new Player("Dealer", new Hand(), 0);
+        Player player = new Player(name, new Hand(), chips, newId);
+        Player dealer = new Player("Dealer", new Hand(), 0, 0);
         Game game = new Game(player, dealer, deck, scanner);
         boolean playing = true;
 
@@ -49,7 +88,7 @@ public class App {
             game.play();
             if (player.chips > 0) {
                 FileWriter writer = new FileWriter("player.txt");
-                writer.write(player.name + "," + player.chips);
+                writer.write(player.id + ", " + player.name + ", " + player.chips);
                 writer.close();
                 System.out.println("Play again? (y/n)");
                 String input = scanner.nextLine();
@@ -63,8 +102,21 @@ public class App {
             System.out.println(player.name + ", leave here at once!");
             System.out.println("Your name has been struck from the record.");
             System.out.println("You may start anew or wallow in misery for eternity");
+
+            ArrayList<String> lines = new ArrayList<String>();
+            Scanner fileScanner = new Scanner(saveFile);
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                if (!line.startsWith(player.id + ",")) {
+                    lines.add(line);
+                }
+            }
+            fileScanner.close();
+
             FileWriter writer = new FileWriter("player.txt");
-            writer.write("");
+            for (String line : lines) {
+                writer.write(line + "\n");
+            }
             writer.close();
         }
     }
