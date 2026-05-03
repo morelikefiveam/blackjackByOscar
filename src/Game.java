@@ -47,7 +47,7 @@ public class Game {
         System.out.println("Current chip balance: " + player.chips);
         System.out.println("How many chips do you want to bet?");
         while (true) {
-            int bet = Integer.parseInt(scanner.nextLine());
+            int bet = Integer.parseInt(scanner.nextLine().trim());
             
             if (bet > player.chips || bet <= 0) {
                 System.out.println("Invalid bet! Try again");
