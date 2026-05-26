@@ -1,0 +1,10 @@
+{
+    "java.project.sourcePaths": [
+        "src",
+        "test"
+    ],
+    "java.project.referencedLibraries": [
+        "lib\\junit-platform-console-standalone-1.7.2.jar",
+        "c:\\Users\\Meett\\Documents\\COMP1010\\blackjackByOscar\\lib\\junit-platform-console-standalone-1.7.2.jar"
+    ]
+}
