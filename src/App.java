@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
-import java.io.FileWriter;
 
 public class App {
 
@@ -9,28 +8,49 @@ public class App {
         int value;
 
         while (true) {
-            try {
-                value = Integer.parseInt(scanner.nextLine().trim());
 
-                if (value >= min && value <= max) {
-                    return value;
-                }
+            String input = scanner.nextLine().trim();
 
-                System.out.println("Enter a number between " + min + " and " + max);
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
+            // reject anything that is not an integer
+            if (!input.matches("-?\\d+")) {
+                System.out.println("Invalid input. Please enter a whole number.");
+                continue;
             }
+
+            value = Integer.parseInt(input);
+
+            if (value >= min && value <= max) {
+                return value;
+            }
+
+            System.out.println("Enter a number between " + min + " and " + max);
         }
+    }
+
+    public static String getStringInput(Scanner scanner) {
+        while (true) {
+            String input = scanner.nextLine().trim();
+            if (!input.isEmpty())
+                return input;
+            System.out.println("Input cannot be empty.");
+        }
+    }
+
+    public static boolean isBlackjack(Player p) {
+        return p.hand.getValue() == 21 && p.hand.hand.size() == 2;
     }
 
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
-        menu(args, scanner);
+
+        while (true) {
+            menu(args, scanner);
+        }
     }
 
-    // ✅ RECURSIVE MENU (safe recursion instead of main recursion)
+    // ================= MENU =================
     public static void menu(String[] args, Scanner scanner) throws Exception {
+
         File saveFile = new File("player.txt");
 
         System.out.println("--- THE TOWER ---");
@@ -43,10 +63,11 @@ public class App {
         int chips = 500;
         int newId = 1;
 
+        // ================= NEW GAME =================
         if (decision == 1) {
 
             System.out.println("What is your name?");
-            name = scanner.nextLine();
+            name = getStringInput(scanner);
 
             if (saveFile.exists()) {
                 Scanner counter = new Scanner(saveFile);
@@ -58,8 +79,10 @@ public class App {
 
                 counter.close();
             }
+        }
 
-        } else {
+        // ================= LOAD GAME =================
+        else {
 
             Player head = null;
             Player current = null;
@@ -75,11 +98,12 @@ public class App {
                 while (fileScanner.hasNextLine()) {
 
                     String line = fileScanner.nextLine();
-                    if (line.isEmpty()) continue;
+                    if (line.isEmpty())
+                        continue;
 
                     String[] parts = line.split(",");
-
-                    if (parts.length != 3) continue;
+                    if (parts.length != 3)
+                        continue;
 
                     int savedId = Integer.parseInt(parts[0].trim());
                     String savedName = parts[1];
@@ -104,15 +128,14 @@ public class App {
                 if (head == null) {
                     System.out.println("No saves detected! Starting new game.");
                     System.out.println("What is your name?");
-                    name = scanner.nextLine();
+                    name = getStringInput(scanner);
 
                 } else {
 
                     int choice = getIntInput(scanner, 0, count - 1);
 
-                    // 🔁 recursion back to menu (SAFE)
+                    // return to menu (controlled recursion)
                     if (choice == 0) {
-                        menu(args, scanner);
                         return;
                     }
 
@@ -125,7 +148,7 @@ public class App {
                     if (chosen == null) {
                         System.out.println("Invalid selection. Starting new game.");
                         System.out.println("What is your name?");
-                        name = scanner.nextLine();
+                        name = getStringInput(scanner);
                         chips = 500;
                         newId = 1;
                     } else {
@@ -138,11 +161,11 @@ public class App {
             } else {
                 System.out.println("No saves detected! Starting new game.");
                 System.out.println("What is your name?");
-                name = scanner.nextLine();
+                name = getStringInput(scanner);
             }
         }
 
-        // ================= GAME START =================
+        // ================= GAME SETUP =================
 
         Deck deck = new Deck();
         Player player = new Player(name, new Hand(), chips, newId);
@@ -151,6 +174,7 @@ public class App {
 
         boolean playing = true;
 
+        // ================= GAME LOOP =================
         while (playing && player.chips > 0) {
 
             deck.deck.clear();
@@ -163,12 +187,12 @@ public class App {
             game.placeBet();
             game.deal();
 
-            // Blackjack check (2-card rule)
-            if (player.hand.getValue() == 21 && player.hand.hand.size() == 2) {
+            // ================= BLACKJACK =================
+            if (isBlackjack(player)) {
 
                 System.out.println("BLACKJACK!");
 
-                if (dealer.hand.getValue() == 21 && dealer.hand.hand.size() == 2) {
+                if (isBlackjack(dealer)) {
                     System.out.println("Push! Dealer also has Blackjack.");
                 } else {
                     System.out.println("Blackjack pays double!");
@@ -180,7 +204,6 @@ public class App {
             }
 
             // ================= SAVE =================
-
             if (player.chips > 0) {
 
                 ArrayList<String> lines = new ArrayList<>();
@@ -193,7 +216,8 @@ public class App {
                     while (fileScanner.hasNextLine()) {
 
                         String line = fileScanner.nextLine();
-                        if (line.isEmpty()) continue;
+                        if (line.isEmpty())
+                            continue;
 
                         if (line.startsWith(player.id + ",")) {
                             lines.add(player.id + "," + player.name + "," + player.chips);
@@ -210,13 +234,7 @@ public class App {
                     lines.add(player.id + "," + player.name + "," + player.chips);
                 }
 
-                FileWriter writer = new FileWriter("player.txt");
-
-                for (String line : lines) {
-                    writer.write(line + "\n");
-                }
-
-                writer.close();
+                saveManager.save(saveFile, lines);
 
                 String input = "";
 
@@ -236,8 +254,7 @@ public class App {
             }
         }
 
-        // ================= CHIP LOSS RESET =================
-
+        // ================= PLAYER DEATH RESET =================
         if (player.chips <= 0) {
 
             System.out.println(player.name + ", leave here at once!");
@@ -252,7 +269,8 @@ public class App {
                 while (fileScanner.hasNextLine()) {
 
                     String line = fileScanner.nextLine();
-                    if (line.isEmpty()) continue;
+                    if (line.isEmpty())
+                        continue;
 
                     if (!line.startsWith(player.id + ",")) {
                         lines.add(line);
@@ -262,17 +280,9 @@ public class App {
                 fileScanner.close();
             }
 
-            FileWriter writer = new FileWriter("player.txt");
-
-            for (String line : lines) {
-                writer.write(line + "\n");
-            }
-
-            writer.close();
+            saveManager.save(saveFile, lines);
         }
 
-        
         System.out.println("\nReturning to main menu...\n");
-        menu(args, scanner);
     }
 }
