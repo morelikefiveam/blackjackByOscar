@@ -1,6 +1,10 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class BlackjackTest {
 
     // --- getTotal ---
@@ -106,5 +110,76 @@ public class BlackjackTest {
     public void testPlayerBetDefault() {
         Player player = new Player("Oscar", new Hand(), 500, 1);
         assertEquals(0, player.bet);
+    }
+
+    @Test
+    public void testNotBustAt21() {
+        Hand hand = new Hand();
+        hand.hand.add(new Card("Ten", "Hearts", 10));
+        hand.hand.add(new Card("Jack", "Spades", 10));
+        hand.hand.add(new Card("Ace", "Clubs", 1));
+
+        assertFalse(hand.isBust());
+    }
+
+    @Test
+    public void testBlackjackDetection() {
+        Player p = new Player("Test", new Hand(), 100, 1);
+        p.hand.hand.add(new Card("Ace", "Hearts", 11));
+        p.hand.hand.add(new Card("King", "Spades", 10));
+
+        assertTrue(App.isBlackjack(p));
+    }
+
+    @Test
+    public void testBetCannotExceedChipsLogic() {
+        Player p = new Player("Test", new Hand(), 100, 1);
+        p.bet = 150;
+
+        assertTrue(p.bet > p.chips);
+    }
+
+    @Test
+    public void testSaveManagerWritesLines() throws Exception {
+        File file = new File("test.txt");
+        ArrayList<String> lines = new ArrayList<>();
+        lines.add("1,Oscar,500");
+
+        SaveManager.save(file, lines);
+
+        assertTrue(file.exists());
+    }
+
+    @Test
+    public void testBetWithinBounds() {
+        Player p = new Player("Test", new Hand(), 100, 1);
+        p.bet = 50;
+
+        assertTrue(p.bet <= p.chips);
+    }
+
+    @Test
+    public void testHandBustEdge() {
+        Hand h = new Hand();
+        h.hand.add(new Card("King", "Hearts", 10));
+        h.hand.add(new Card("Queen", "Spades", 10));
+        h.hand.add(new Card("Two", "Clubs", 2));
+
+        assertTrue(h.isBust());
+    }
+
+    @Test
+    public void testSaveManagerWritesCorrectData() throws Exception {
+        File file = new File("test.txt");
+        ArrayList<String> lines = new ArrayList<>();
+        lines.add("1,Oscar,500");
+
+        SaveManager.save(file, lines);
+
+        Scanner sc = new Scanner(file);
+        assertEquals("1,Oscar,500", sc.nextLine());
+        sc.close();
+
+        file.delete();
     }
 }

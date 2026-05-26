@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.File;
 
+
 public class App {
 
     public static int getIntInput(Scanner scanner, int min, int max) {
@@ -234,7 +235,7 @@ public class App {
                     lines.add(player.id + "," + player.name + "," + player.chips);
                 }
 
-                saveManager.save(saveFile, lines);
+                SaveManager.save(saveFile, lines);
 
                 String input = "";
 
@@ -280,7 +281,7 @@ public class App {
                 fileScanner.close();
             }
 
-            saveManager.save(saveFile, lines);
+            SaveManager.save(saveFile, lines);
         }
 
         System.out.println("\nReturning to main menu...\n");

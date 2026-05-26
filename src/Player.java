@@ -4,7 +4,7 @@ public class Player {
     int chips;
     int id;
     int bet = 0;
-    Player next;
+    Player next; // recursive data structure (linked list node)
 
     public Player(String name, Hand hand, int chips, int id){
         this.id = id;

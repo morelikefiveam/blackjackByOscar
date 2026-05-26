@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 
-public class saveManager {
+public class SaveManager {
 
    
     public static void save(File file, List<String> lines) throws IOException {
