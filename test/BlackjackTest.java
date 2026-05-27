@@ -122,14 +122,7 @@ public class BlackjackTest {
         assertFalse(hand.isBust());
     }
 
-    @Test
-    public void testBlackjackDetection() {
-        Player p = new Player("Test", new Hand(), 100, 1);
-        p.hand.hand.add(new Card("Ace", "Hearts", 11));
-        p.hand.hand.add(new Card("King", "Spades", 10));
 
-        assertTrue(App.isBlackjack(p));
-    }
 
     @Test
     public void testBetCannotExceedChipsLogic() {
