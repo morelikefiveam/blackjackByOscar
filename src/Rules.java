@@ -1,4 +1,4 @@
-public class Rules {
+public class Rules { // Handles rules
 
     public static void determineWinner(Player player, Player dealer) {
 
