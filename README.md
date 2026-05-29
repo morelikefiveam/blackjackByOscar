@@ -3,8 +3,7 @@
 ## Getting Started
 
 You've wound up in a mysterious casino with 500 chips on your person.
-Make your way to the top of the High Rollers list!
-Or end up with the lost souls who went broke trying....
+Try not to lose it all in your pursuit to the top...
 It's Blackjack time!
 
 ## Controls
