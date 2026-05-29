@@ -102,13 +102,13 @@ public class BlackjackTest {
 
     @Test
     public void testPlayerStartingChips() {
-        Player player = new Player("Oscar", new Hand(), 500, 1);
+        Player player = new Player("foo", new Hand(), 500, 1);
         assertEquals(500, player.chips);
     }
 
     @Test
     public void testPlayerBetDefault() {
-        Player player = new Player("Oscar", new Hand(), 500, 1);
+        Player player = new Player("bar", new Hand(), 500, 1);
         assertEquals(0, player.bet);
     }
 
@@ -136,7 +136,8 @@ public class BlackjackTest {
     public void testSaveManagerWritesLines() throws Exception {
         File file = new File("test.txt");
         ArrayList<String> lines = new ArrayList<>();
-        lines.add("1,Oscar,500");
+        lines.add("1,foo,500");
+        lines.add("2,bar,500");
 
         SaveManager.save(file, lines);
 
