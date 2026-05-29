@@ -21,9 +21,9 @@ It is also a demonstration of object oriented design, file I/O and text-based us
 
 ## Program Structure
 
-The program is structured across six classes, each with their own responsibility.
+The program is structured across nine classes, each with their own responsibility.
 
-**App.java** is the program's entry point and handles the main loop of the game, the new game/load menu, file saving and the broke detection logic.
+**App.java** is the program's entry point and handles the outer menu loop and inner round loop, round setup, the play again prompt and the broke detection and save file cleanup  
 
 **Card.java** represents a single playing card that is assigned a suit, name and value. It also contains a toString method for display purposes.
 
@@ -31,9 +31,15 @@ The program is structured across six classes, each with their own responsibility
 
 **Hand.java** represents the card that the player and dealer are holding. It is responsible for taking cards from the deck on a hit, calculating the hand total and the Ace logic, deciding whether the card is a 1 or an 11. 
 
-**Player.java** represents a player at the table, storing their name, chips, current hand and current bet.
+**Player.java** represents a player at the table, storing their name, unique id, chip balance, current hand and active bet. It also serves as a node in the linked list of saved players via its next field.
 
 **Game.java** is the main gameplay class. It holds the logic for betting, dealing, the player's hit/stand loop, the dealer's automated play and the winner of each round. 
+
+**Rules.java** determines the winner of each round by comparing the player's and dealer's hands, handling all possible outcomes — player bust, dealer bust, higher total, and draw.
+
+**MenuService.java** handles the main menu, allowing players to start a new game or load an existing save. It builds the linked list of saved players and manages player selection.
+
+**SaveManager.java** handles all file writing for player save data, including saving updated chip balances and removing players who have gone broke.
 
 ## How To Run 
 - Make sure Java is installed on your machine
