@@ -17,7 +17,7 @@ It's Blackjack time!
 The Tower is first and foremost, meant to entertain or kill boredom. 
 The replayable nature and high score system ensures replayablility and fun, even for the gambling-averse.
 The game also teaches about probability and risk managment by educating players on whether they should hit or stand on a hand.
-It is also a demonstration of object oriented design, file I/O and text-based user interface.
+It is also a demonstration of object oriented design, file I/O, a recursive data structure and text-based user interface.
 
 ## Program Structure
 
